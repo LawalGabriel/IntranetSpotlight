@@ -16,6 +16,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(props.defaultView || 'grid');
+  const [groupedItems, setGroupedItems] = useState<{[key: string]: ISpotLightItem[]}>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const spRef = useRef<any>(null);
 
@@ -43,7 +44,8 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
           "ImageURL",
           "Employee/Title",
           "Employee/Id",
-          "JobRole"
+          "JobRole",
+          "Employee/Department"
         )
         .expand("Employee")
         .filter("Status eq 1")
@@ -51,6 +53,19 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         .top(props.defaultItemCount || 6)();
 
       setSpotlightItems(items);
+      
+      // Group items by date
+      const grouped: {[key: string]: ISpotLightItem[]} = {};
+      items.forEach(item => {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        const dateKey = formatDateForGrouping(item.Created);
+        if (!grouped[dateKey]) {
+          grouped[dateKey] = [];
+        }
+        grouped[dateKey].push(item);
+      });
+      setGroupedItems(grouped);
+      
       setIsLoading(false);
 
     } catch (error: any) {
@@ -74,15 +89,30 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
     });
   };
 
+  const formatDateForGrouping = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  const getDefaultImage = (): string => {
+    return props.defaultImage || 'https://via.placeholder.com/400x300?text=Staff+Spotlight';
+  };
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
 
@@ -93,7 +123,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         color: props.textColor || 'inherit'
       }}>
         <div className={styles.loadingContainer}>
-          <div className={styles.loadingSpinner}></div>
+          {/*<div className={styles.loadingSpinner}></div>*/}
           <div>Loading spotlight items...</div>
         </div>
       </div>
@@ -163,7 +193,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         </div>
       </div>
 
-      <div className={styles.separator}></div>
+      <div className={styles.separator} />
 
       {/* Content Section */}
       {spotlightItems.length === 0 ? (
@@ -189,33 +219,54 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
                 ref={scrollContainerRef}
               >
                 {spotlightItems.map((item: ISpotLightItem) => (
-                  <a 
+                  <div 
                     key={item.Id} 
-                    href={item.Link || "#"}
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className={styles.spotlightCard}
-                    style={{ 
-                      backgroundColor: props.cardBackgroundColor || '#ffffff',
-                      color: props.textColor || '#323130'
-                    }}
+                    className={styles.spotlightCardWrapper}
                   >
-                    <div className={styles.cardContent}>
-                      <div className={styles.cardDate}>
-                        {formatDate(item.Created)}
-                      </div>
-                      <h3 className={styles.cardTitle}>{item.Title}</h3>
-                      <p className={styles.cardDescription}>{item.Description}</p>
-                      {item.Employee && (
-                        <div className={styles.cardEmployee}>
-                          <span className={styles.employeeName}>{item.Employee.Title}</span>
-                          {item.JobRole && (
-                            <span className={styles.employeeRole}> • {item.JobRole}</span>
-                          )}
+                    <a 
+                      href={item.Link || "#"}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className={styles.spotlightCard}
+                      style={{ 
+                        backgroundImage: `url('${item.ImageURL || getDefaultImage()}')`,
+                        backgroundColor: props.cardBackgroundColor || '#ffffff'
+                      }}
+                    >
+                      <div className={styles.cardGradientOverlay} />
+                      
+                      <div className={styles.cardContent}>
+                        <div className={styles.cardDate}>
+                          {formatDate(item.Created)}
                         </div>
-                      )}
-                    </div>
-                  </a>
+                        <h3 className={styles.cardTitle}>{item.Title}</h3>
+                        <p className={styles.cardDescription}>{item.Description}</p>
+                        
+                        {item.Employee && (
+                          <div className={styles.cardEmployeeInfo}>
+                            <div className={styles.employeeName}>
+                              <Icon iconName="Contact" className={styles.employeeIcon} />
+                              {item.Employee.Title}
+                            </div>
+                            <div className={styles.employeeDetails}>
+                              {item.Employee.JobRole && (
+                                <span className={styles.employeeRole}>
+                                  <Icon iconName="Work" className={styles.roleIcon} />
+                                  {item.Employee.JobRole}
+                                </span>
+                              )}
+                              {item.Employee.Department && (
+                                <span className={styles.employeeDepartment}>
+                                  <Icon iconName="CityNext" className={styles.deptIcon} />
+                                  {item.Employee.Department}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </a>
+                  </div>
                 ))}
               </div>
               
@@ -228,38 +279,65 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
               </button>
             </div>
           ) : (
-            /* List View */
+            /* List View - Grouped by Date */
             <div className={styles.listContainer}>
-              {spotlightItems.map((item: ISpotLightItem) => (
-                <a 
-                  key={item.Id} 
-                  href={item.Link || "#"}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={styles.spotlightListItem}
-                  style={{ 
-                    backgroundColor: props.cardBackgroundColor || '#ffffff',
-                    color: props.textColor || '#323130'
-                  }}
-                >
-                  <div className={styles.listItemContent}>
-                    <div className={styles.listItemHeader}>
-                      <div className={styles.listItemDate}>
-                        {formatDate(item.Created)}
-                      </div>
-                      <h3 className={styles.listItemTitle}>{item.Title}</h3>
-                    </div>
-                    <p className={styles.listItemDescription}>{item.Description}</p>
-                    {item.Employee && (
-                      <div className={styles.listItemEmployee}>
-                        <span className={styles.employeeName}>{item.Employee.Title}</span>
-                        {item.JobRole && (
-                          <span className={styles.employeeRole}> • {item.JobRole}</span>
-                        )}
-                      </div>
-                    )}
+              {Object.keys(groupedItems).map((date) => (
+                <div key={date} className={styles.dateGroup}>
+                  <div className={styles.dateHeader}>
+                    <Icon iconName="Calendar" className={styles.dateIcon} />
+                    <h3 className={styles.dateTitle}>{date}</h3>
                   </div>
-                </a>
+                  
+                  <div className={styles.dateItems}>
+                    {groupedItems[date].map((item: ISpotLightItem) => (
+                      <a 
+                        key={item.Id} 
+                        href={item.Link || "#"}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className={styles.spotlightListItem}
+                      >
+                        <div 
+                          className={styles.listItemImage}
+                          style={{ 
+                            backgroundImage: `url('${item.ImageURL || getDefaultImage()}')` 
+                          }}
+                         />
+                        
+                        <div className={styles.listItemContent}>
+                          <div className={styles.listItemHeader}>
+                            <h3 className={styles.listItemTitle}>
+                              <Icon iconName="Medal" className={styles.titleIcon} />
+                              {item.Title}
+                            </h3>
+                            <div className={styles.listItemDescription}>{item.Description}</div>
+                          </div>
+                          
+                          {item.Employee && (
+                            <div className={styles.listItemEmployeeInfo}>
+                              <div className={styles.listEmployeeRow}>
+                                <Icon iconName="Contact" className={styles.employeeIcon} />
+                                <span className={styles.employeeName}>{item.Employee.Title}</span>
+                                {item.Employee.JobRole && (
+                                  <>
+                                    <span className={styles.separatorDot}>•</span>
+                                    <span className={styles.employeeRole}>{item.Employee.JobRole}</span>
+                                  </>
+                                )}
+                              </div>
+                              {item.Employee.Department && (
+                                <div className={styles.listEmployeeDept}>
+                                  <Icon iconName="CityNext" className={styles.deptIcon} />
+                                  {item.Employee.Department}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           )}

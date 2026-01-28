@@ -37,8 +37,9 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
         cardBackgroundColor: "#f3f2f1",
         accentColor: "#0078d4",
         defaultItemCount: 6,
-        defaultView: 'grid'
-      }
+        defaultView: 'grid',
+        defaultImage: ""
+              }
     );
 
     ReactDom.render(element, this.domElement);
@@ -105,7 +106,7 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
     return Version.parse('1.0');
   }
 
-  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+ protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
   return {
     pages: [
       {
@@ -117,7 +118,8 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
             groupName: strings.BasicGroupName,
             groupFields: [
               PropertyPaneTextField('listTitle', {
-                label: strings.DescriptionFieldLabel
+                label: strings.DescriptionFieldLabel,
+                placeholder: 'Enter list title'
               }),
               PropertyPaneDropdown('defaultView', {
                 label: 'Default View',
@@ -132,6 +134,10 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
                 max: 20,
                 value: 6,
                 showValue: true
+              }),
+              PropertyPaneTextField('defaultImage', {
+                label: 'Default Image URL',
+                placeholder: 'URL for default background image'
               })
             ]
           },

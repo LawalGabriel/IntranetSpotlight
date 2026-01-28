@@ -1,26 +1,15 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 
-export interface ISpotLightItem {
-  Id: number;
-  Title: string;
-  ImageURL: { Url: string; Description: string };
-  Created: string;
-   Status?: boolean;
-  Link: string;
-  Description: string;
-   Employee: { Title: string };
-    JobRole:string
-       
-  }
-
-export interface IStaffSpotlightProps {
-  context: WebPartContext;
+  export interface IStaffSpotlightProps {
   description: string;
-  isDarkTheme: boolean;
-  environmentMessage: string;
-  hasTeamsContext: boolean;
-  userDisplayName: string;
+  context: WebPartContext;
   listTitle: string;
+  isDarkTheme?: boolean;
+  environmentMessage?: string;
+  hasTeamsContext?: boolean;
+  userDisplayName?: string;
+
+  // Configurable properties
     // Configurable properties
   backgroundColor: string;
   textColor: string;
@@ -28,5 +17,23 @@ export interface IStaffSpotlightProps {
   accentColor: string;
   defaultItemCount: number;
   defaultView: 'grid' | 'list';
+  defaultImage: string;
+}
 
+export interface ISpotLightItem {
+  Id: number;
+  Title: string;
+  Created: string;
+  Status: number;
+  Description: string;
+  Link: string;
+  ImageURL: string;
+  Employee: {
+    JobRole: JSX.Element;
+    Id: number;
+    Title: string;
+   Department: string;
+  };
+  JobRole: string;
+  Department: string;
 }
