@@ -1,0 +1,50 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "staff-spotlight-client-side-solution",
+    "id": "902e4953-b64c-49e5-a1ac-5742f7ec7ea7",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.20.0"
+    },
+      "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.Read.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.ReadBasic.All"
+      }
+    ],
+    "metadata": {
+      "shortDescription": {
+        "default": "staff-spotlight description"
+      },
+      "longDescription": {
+        "default": "staff-spotlight description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "staff-spotlight Feature",
+        "description": "The feature that activates elements of the staff-spotlight solution.",
+        "id": "f89ad71e-7454-4f21-b754-5ceb23ec092e",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/staff-spotlight.sppkg"
+  }
+}
