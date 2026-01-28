@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 /* eslint-disable no-void */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
@@ -44,7 +45,8 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
           "ImageURL",
           "Employee/Title",
           "Employee/Id",
-          "JobRole",
+          "Employee/EMail",
+          "Employee/JobTitle",
           "Employee/Department"
         )
         .expand("Employee")
@@ -102,6 +104,11 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
     return props.defaultImage || 'https://via.placeholder.com/400x300?text=Staff+Spotlight';
   };
 
+  const getProfilePictureUrl = (email: string): string => {
+    if (!email) return '';
+    return `/_layouts/15/userphoto.aspx?size=M&accountname=${email}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -123,7 +130,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         color: props.textColor || 'inherit'
       }}>
         <div className={styles.loadingContainer}>
-          {/*<div className={styles.loadingSpinner}></div>*/}
+          <div className={styles.loadingSpinner}></div>
           <div>Loading spotlight items...</div>
         </div>
       </div>
@@ -193,7 +200,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         </div>
       </div>
 
-      <div className={styles.separator} />
+      <div className={styles.separator}></div>
 
       {/* Content Section */}
       {spotlightItems.length === 0 ? (
@@ -229,38 +236,38 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
                       rel="noopener noreferrer"
                       className={styles.spotlightCard}
                       style={{ 
-                        backgroundImage: `url('${item.ImageURL || getDefaultImage()}')`,
+                        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${item.ImageURL || getDefaultImage()}')`,
                         backgroundColor: props.cardBackgroundColor || '#ffffff'
                       }}
                     >
-                      <div className={styles.cardGradientOverlay} />
-                      
                       <div className={styles.cardContent}>
-                        <div className={styles.cardDate}>
+                        <div className={styles.cardDate} style={{ color: props.accentColor || '#0078d4' }}>
                           {formatDate(item.Created)}
                         </div>
                         <h3 className={styles.cardTitle}>{item.Title}</h3>
-                        <p className={styles.cardDescription}>{item.Description}</p>
+                        <p className={styles.cardDescription} style={{ color: props.bodyTextColor || '#ffffff' }}>
+                          {item.Description}
+                        </p>
                         
                         {item.Employee && (
                           <div className={styles.cardEmployeeInfo}>
-                            <div className={styles.employeeName}>
-                              <Icon iconName="Contact" className={styles.employeeIcon} />
-                              {item.Employee.Title}
-                            </div>
-                            <div className={styles.employeeDetails}>
-                              {item.Employee.JobRole && (
-                                <span className={styles.employeeRole}>
-                                  <Icon iconName="Work" className={styles.roleIcon} />
-                                  {item.Employee.JobRole}
-                                </span>
-                              )}
-                              {item.Employee.Department && (
-                                <span className={styles.employeeDepartment}>
-                                  <Icon iconName="CityNext" className={styles.deptIcon} />
-                                  {item.Employee.Department}
-                                </span>
-                              )}
+                            <div className={styles.employeeProfile}>
+                              <img 
+                                src={getProfilePictureUrl(item.Employee.EMail)} 
+                                alt={item.Employee.Title}
+                                className={styles.profilePicture}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/50x50?text=User';
+                                }}
+                              />
+                              <div className={styles.employeeDetails}>
+                                <div className={styles.employeeName}>{item.Employee.Title}</div>
+                                {item.Employee.JobTitle && (
+                                  <div className={styles.employeeJobTitle} style={{ color: props.bodyTextColor || '#ffffff' }}>
+                                    {item.Employee.JobTitle}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         )}
@@ -279,62 +286,73 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
               </button>
             </div>
           ) : (
-            /* List View - Grouped by Date */
+            /* List View - Grouped by Date with color configuration */
             <div className={styles.listContainer}>
               {Object.keys(groupedItems).map((date) => (
                 <div key={date} className={styles.dateGroup}>
                   <div className={styles.dateHeader}>
-                    <Icon iconName="Calendar" className={styles.dateIcon} />
-                    <h3 className={styles.dateTitle}>{date}</h3>
+                    <Icon iconName="Calendar" className={styles.dateIcon} style={{ color: props.accentColor || '#0078d4' }} />
+                    <h3 className={styles.dateTitle} style={{ color: props.textColor || '#323130' }}>
+                      {date}
+                    </h3>
                   </div>
                   
                   <div className={styles.dateItems}>
                     {groupedItems[date].map((item: ISpotLightItem) => (
-                      <a 
+                      <div 
                         key={item.Id} 
-                        href={item.Link || "#"}
-                        target="_blank" 
-                        rel="noopener noreferrer"
                         className={styles.spotlightListItem}
+                        style={{ 
+                          backgroundColor: props.cardBackgroundColor || '#ffffff',
+                          color: props.textColor || '#323130'
+                        }}
                       >
-                        <div 
-                          className={styles.listItemImage}
-                          style={{ 
-                            backgroundImage: `url('${item.ImageURL || getDefaultImage()}')` 
-                          }}
-                         />
-                        
-                        <div className={styles.listItemContent}>
-                          <div className={styles.listItemHeader}>
-                            <h3 className={styles.listItemTitle}>
-                              <Icon iconName="Medal" className={styles.titleIcon} />
-                              {item.Title}
-                            </h3>
-                            <div className={styles.listItemDescription}>{item.Description}</div>
-                          </div>
+                        <a 
+                          href={item.Link || "#"}
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.listItemLink}
+                        >
+                          <div 
+                            className={styles.listItemImage}
+                            style={{ 
+                              backgroundImage: `url('${item.ImageURL || getDefaultImage()}')` 
+                            }}
+                          ></div>
                           
-                          {item.Employee && (
-                            <div className={styles.listItemEmployeeInfo}>
-                              <div className={styles.listEmployeeRow}>
-                                <Icon iconName="Contact" className={styles.employeeIcon} />
-                                <span className={styles.employeeName}>{item.Employee.Title}</span>
-                                {item.Employee.JobRole && (
-                                  <>
-                                    <span className={styles.separatorDot}>•</span>
-                                    <span className={styles.employeeRole}>{item.Employee.JobRole}</span>
-                                  </>
-                                )}
-                              </div>
-                              {item.Employee.Department && (
-                                <div className={styles.listEmployeeDept}>
-                                  <Icon iconName="CityNext" className={styles.deptIcon} />
-                                  {item.Employee.Department}
-                                </div>
-                              )}
+                          <div className={styles.listItemContent}>
+                            <div className={styles.listItemHeader}>
+                              <h3 className={styles.listItemTitle}>{item.Title}</h3>
+                              <p className={styles.listItemDescription} style={{ color: props.bodyTextColor || '#605e5c' }}>
+                                {item.Description}
+                              </p>
                             </div>
-                          )}
-                        </div>
-                      </a>
+                            
+                            {item.Employee && (
+                              <div className={styles.listItemEmployeeInfo}>
+                                <div className={styles.employeeProfile}>
+                                  <img 
+                                    src={getProfilePictureUrl(item.Employee.EMail)} 
+                                    alt={item.Employee.Title}
+                                    className={styles.listProfilePicture}
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40x40?text=User';
+                                    }}
+                                  />
+                                  <div className={styles.listEmployeeDetails}>
+                                    <div className={styles.listEmployeeName} style={{ color: props.textColor || '#323130' }}>
+                                      {item.Employee.Title}
+                                    </div>
+                                    <div className={styles.listEmployeeJob} style={{ color: props.bodyTextColor || '#605e5c' }}>
+                                      {item.Employee.JobTitle}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </a>
+                      </div>
                     ))}
                   </div>
                 </div>
