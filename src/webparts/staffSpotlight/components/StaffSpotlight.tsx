@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 /* eslint-disable no-void */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
@@ -105,7 +106,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         color: props.textColor || 'inherit'
       }}>
         <div className={styles.loadingContainer}>
-          <div className={styles.loadingSpinner} />
+          <div className={styles.loadingSpinner}></div>
           <div>Loading spotlight items...</div>
         </div>
       </div>
@@ -144,7 +145,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         color: props.textColor || 'inherit'
       }}
     >
-      {/* Header Section */}
+      {/* Header Section with Centered Title */}
       <div className={styles.headerSection}>
         <h1 className={styles.title} style={{ color: props.textColor || '#323130' }}>
           STAFF SPOTLIGHT

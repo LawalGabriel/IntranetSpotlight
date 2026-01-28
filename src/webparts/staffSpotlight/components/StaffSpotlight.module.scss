@@ -15,14 +15,15 @@
   }
 }
 
-// Header Section
+// Header Section - Centered
 .headerSection {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Center align */
   align-items: center;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  gap: 1rem;
+  text-align: center; /* Ensure text is centered */
+  width: 100%; /* Full width */
 }
 
 .title {
@@ -31,6 +32,8 @@
   margin: 0;
   letter-spacing: -0.5px;
   text-transform: uppercase;
+  text-align: center; /* Center text */
+  width: 100%; /* Full width */
   
   @media (max-width: 768px) {
     font-size: 1.5rem;
@@ -41,7 +44,13 @@
   height: 2px;
   background-color: currentColor;
   opacity: 0.1;
-  margin-bottom: 2rem;
+  margin: 0 auto 2rem auto; /* Center the separator */
+  width: 80%; /* Make separator narrower */
+  max-width: 400px; /* Max width for separator */
+  
+  @media (max-width: 768px) {
+    width: 60%;
+  }
 }
 
 // Loading State
@@ -52,6 +61,7 @@
   justify-content: center;
   min-height: 300px;
   gap: 1rem;
+  text-align: center;
 }
 
 .loadingSpinner {
@@ -73,6 +83,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 .retryButton {
