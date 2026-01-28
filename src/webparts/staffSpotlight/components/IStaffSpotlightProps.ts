@@ -1,16 +1,10 @@
-import { WebPartContext } from "@microsoft/sp-webpart-base";
-
-  export interface IStaffSpotlightProps {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export interface IStaffSpotlightProps {
   description: string;
-  context: WebPartContext;
+  context: any;
   listTitle: string;
-  isDarkTheme?: boolean;
-  environmentMessage?: string;
-  hasTeamsContext?: boolean;
-  userDisplayName?: string;
-
+  
   // Configurable properties
-    // Configurable properties
   backgroundColor: string;
   textColor: string;
   cardBackgroundColor: string;
@@ -29,10 +23,10 @@ export interface ISpotLightItem {
   Link: string;
   ImageURL: string;
   Employee: {
-    JobRole: JSX.Element;
     Id: number;
     Title: string;
-   Department: string;
+    JobRole: string;
+    Department: string;
   };
   JobRole: string;
   Department: string;
