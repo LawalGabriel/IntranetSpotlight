@@ -3,7 +3,7 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,PropertyPaneSlider, PropertyPaneDropdown
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -31,7 +31,13 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
         context: this.context,
-        listTitle: "StaffSpotlight"
+        listTitle: "StaffSpotlight",
+        backgroundColor: "#ffffff",
+        textColor: "#000000",
+        cardBackgroundColor: "#f3f2f1",
+        accentColor: "#0078d4",
+        defaultItemCount: 6,
+        defaultView: 'grid'
       }
     );
 
@@ -100,24 +106,59 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return {
-      pages: [
-        {
-          header: {
-            description: strings.PropertyPaneDescription
+  return {
+    pages: [
+      {
+        header: {
+          description: strings.PropertyPaneDescription
+        },
+        groups: [
+          {
+            groupName: strings.BasicGroupName,
+            groupFields: [
+              PropertyPaneTextField('listTitle', {
+                label: strings.DescriptionFieldLabel
+              }),
+              PropertyPaneDropdown('defaultView', {
+                label: 'Default View',
+                options: [
+                  { key: 'grid', text: 'Grid View' },
+                  { key: 'list', text: 'List View' }
+                ]
+              }),
+              PropertyPaneSlider('defaultItemCount', {
+                label: 'Default Item Count',
+                min: 3,
+                max: 20,
+                value: 6,
+                showValue: true
+              })
+            ]
           },
-          groups: [
-            {
-              groupName: strings.BasicGroupName,
-              groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                })
-              ]
-            }
-          ]
-        }
-      ]
-    };
-  }
+          {
+            groupName: 'Styling',
+            groupFields: [
+              PropertyPaneTextField('backgroundColor', {
+                label: 'Background Color',
+                value: 'transparent'
+              }),
+              PropertyPaneTextField('textColor', {
+                label: 'Text Color',
+                value: '#323130'
+              }),
+              PropertyPaneTextField('cardBackgroundColor', {
+                label: 'Card Background Color',
+                value: '#ffffff'
+              }),
+              PropertyPaneTextField('accentColor', {
+                label: 'Accent Color',
+                value: '#0078d4'
+              })
+            ]
+          }
+        ]
+      }
+    ]
+  };
+}
 }

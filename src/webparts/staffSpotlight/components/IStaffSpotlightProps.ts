@@ -21,4 +21,12 @@ export interface IStaffSpotlightProps {
   hasTeamsContext: boolean;
   userDisplayName: string;
   listTitle: string;
+    // Configurable properties
+  backgroundColor: string;
+  textColor: string;
+  cardBackgroundColor: string;
+  accentColor: string;
+  defaultItemCount: number;
+  defaultView: 'grid' | 'list';
+
 }
