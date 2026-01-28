@@ -37,10 +37,9 @@ export interface IStaffSpotlightWebPartProps {
   listTitle: string;
   backgroundColor: string;
   textColor: string;
-  bodyTextColor: string; // New: Body text color
+  bodyTextColor: string;
   cardBackgroundColor: string;
   accentColor: string;
   defaultItemCount: number;
-  defaultView: 'grid' | 'list';
   defaultImage: string;
 }

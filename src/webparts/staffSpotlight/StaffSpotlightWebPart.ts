@@ -6,7 +6,7 @@ import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField,
   PropertyPaneSlider,
-  PropertyPaneDropdown,
+  
   IPropertyPaneField
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
@@ -82,7 +82,7 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
     return Version.parse('1.0');
   }
 
-  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+ protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
   return {
     pages: [
       {
@@ -99,13 +99,6 @@ export default class StaffSpotlightWebPart extends BaseClientSideWebPart<IStaffS
               PropertyPaneTextField('listTitle', {
                 label: strings.ListTitleFieldLabel,
                 placeholder: 'Enter list title'
-              }),
-              PropertyPaneDropdown('defaultView', {
-                label: 'Default View',
-                options: [
-                  { key: 'grid', text: 'Grid View' },
-                  { key: 'list', text: 'List View' }
-                ]
               }),
               PropertyPaneSlider('defaultItemCount', {
                 label: 'Default Item Count',
