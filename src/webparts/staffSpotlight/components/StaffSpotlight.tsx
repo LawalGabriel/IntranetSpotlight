@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable no-void */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -40,23 +41,18 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
           "Created",          
           "Status",
           "Description",
-          "Link",
-          "ImageURL",
           "Employee/Title",
-          "Employee/Id",
           "Employee/EMail",
           "Employee/JobTitle",
-          "Employee/Department",
-          "AttachmentFiles/FileName",
+          "Employee/Department"
         )
-        .expand("Employee,AttachmentFiles")
+        .expand("Employee")
         .filter("Status eq 1")
         .orderBy("Created", false)
         .top(props.defaultItemCount || 6)();
 
       setSpotlightItems(items);
       setIsLoading(false);
-      setCurrentItemIndex(0);
 
     } catch (error: any) {
       console.error('Error loading spotlight items:', error);
@@ -71,12 +67,16 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
   }, [props.listTitle, props.context, loadSpotLightItems]);
 
   const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        month: 'long', 
+        day: 'numeric' 
+      }).toUpperCase();
+    } catch (error) {
+      return 'DATE NOT AVAILABLE';
+    }
   };
 
   const goToPrevious = () => {
@@ -105,8 +105,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
   if (isLoading) {
     return (
       <div className={styles.staffSpotlight} style={{ 
-        backgroundColor: props.backgroundColor || 'transparent',
-        color: props.textColor || 'inherit'
+        backgroundColor: props.backgroundColor || '#f5f5f5'
       }}>
         <div className={styles.loadingContainer}>
           <div className={styles.loadingSpinner}></div>
@@ -118,10 +117,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
 
   if (errorMessage) {
     return (
-      <div className={styles.staffSpotlight} style={{ 
-        backgroundColor: props.backgroundColor || 'transparent',
-        color: props.textColor || 'inherit'
-      }}>
+      <div className={styles.staffSpotlight}>
         <div className={styles.errorContainer}>
           <Placeholder
             iconName='Error'
@@ -142,13 +138,13 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
 
   if (spotlightItems.length === 0) {
     return (
-      <div className={styles.staffSpotlight} style={{ 
-        backgroundColor: props.backgroundColor || 'transparent',
-        color: props.textColor || 'inherit'
-      }}>
+      <div className={styles.staffSpotlight}>
         <div className={styles.noItems}>
           <Icon iconName="Emoji2" className={styles.noItemsIcon} />
           <div>No spotlight items found.</div>
+          <div className={styles.noItemsHelp}>
+            Please configure a list in the web part properties.
+          </div>
         </div>
       </div>
     );
@@ -160,22 +156,20 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
     <div 
       className={styles.staffSpotlight}
       style={{ 
-        backgroundColor: props.backgroundColor || 'transparent',
-        color: props.textColor || 'inherit'
+        backgroundColor: props.backgroundColor || '#ffffff'
       }}
     >
       {/* Header Section */}
       <div 
         className={styles.headerSection} 
         style={{ 
-          height: props.headerHeight || 'auto',
-          minHeight: props.headerHeight || '60px'
+          height: props.headerHeight || '60px'
         }}
       >
         <h1 
           className={styles.title} 
           style={{ 
-            color: props.textColor || '#323130',
+            color: props.textColor || '#000000',
             fontSize: props.headerFontSize || '2rem'
           }}
         >
@@ -187,43 +181,29 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
 
       {/* Single Item Display */}
       <div className={styles.singleItemContainer}>
-        <button 
-          className={styles.navButton} 
-          onClick={goToPrevious}
-          aria-label="Previous item"
-          disabled={spotlightItems.length <= 1}
-          style={{
-            width: props.navButtonSize || '40px',
-            height: props.navButtonSize || '40px',
-            color: props.navButtonColor || 'inherit'
-          }}
-        >
-          <Icon iconName="ChevronLeft" />
-        </button>
+        {spotlightItems.length > 1 && (
+          <button 
+            className={styles.navButton} 
+            onClick={goToPrevious}
+            aria-label="Previous item"
+          >
+            <Icon iconName="ChevronLeft" />
+          </button>
+        )}
         
         <div 
           className={styles.spotlightCard}
           style={{
-            height: props.cardHeight || '600px',
-            width: props.cardWidth || '650px',
-            borderRadius: props.cardBorderRadius || '12px',
-            boxShadow: props.cardShadow || '0 4px 12px rgba(0, 0, 0, 0.15)'
+            height: props.cardHeight || '500px',
+            backgroundColor: props.cardBackgroundColor || '#ffffff'
           }}
         >
-          <div 
-            className={styles.cardContent}
-            style={{ 
-              backgroundColor: props.cardBackgroundColor || '#ffffff',
-              padding: props.cardPadding || '2.5rem'
-            }}
-          >
+          <div className={styles.cardContent}>
             {/* Date Section */}
             <div 
               className={styles.cardDate}
               style={{ 
-                color: props.dateColor || props.accentColor || '#0078d4',
-                fontSize: props.dateFontSize || '0.875rem',
-                fontWeight: props.dateFontWeight || '600'
+                color: props.accentColor || '#0078d4'
               }}
             >
               {formatDate(currentItem.Created)}
@@ -234,10 +214,8 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
               className={styles.cardTitle}
               style={{ 
                 fontSize: props.spotlightTitleFontSize || '1.5rem',
-                color: props.spotlightTitleColor || '#323130',
-                fontWeight: props.spotlightTitleFontWeight || '600',
-                padding: props.spotlightTitlePadding || '0',
-                margin: props.spotlightTitleMargin || '0'
+                color: props.spotlightTitleColor || '#000000',
+                fontWeight: props.spotlightTitleFontWeight || '700'
               }}
             >
               {currentItem.Title}
@@ -249,76 +227,51 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
                 className={styles.cardDescriptionSection}
                 style={{
                   fontSize: props.descriptionFontSize || '1rem',
-                  color: props.descriptionColor || '#555555',
-                  backgroundColor: props.descriptionBackgroundColor || 'transparent',
-                  padding: props.descriptionPadding || '0',
-                  borderRadius: props.descriptionBorderRadius || '0',
-                  lineHeight: props.descriptionLineHeight || '1.5',
-                  margin: props.descriptionMargin || '0'
+                  color: props.descriptionColor || '#333333'
                 }}
               >
                 <p>{currentItem.Description}</p>
               </div>
             )}
             
-            {/* Employee Section */}
+            {/* Employee Section - Positioned near bottom */}
             {currentItem.Employee && (
-              <div 
-                className={styles.cardEmployeeSection}
-                style={{
-                  color: props.employeeTextColor || 'inherit',
-                  backgroundColor: props.employeeBackgroundColor || 'rgba(248, 249, 250, 0.9)',
-                  borderColor: props.employeeBorderColor || '#dee2e6',
-                  borderWidth: props.employeeBorderWidth || '1px',
-                  borderStyle: 'solid',
-                  borderRadius: props.employeeBorderRadius || '8px',
-                  padding: props.employeePadding || '1.25rem',
-                  margin: props.employeeMargin || '0'
-                }}
-              >
-                <div className={styles.employeeProfile}>
-                  <img 
-                    src={currentItem.Employee.EMail ? 
-                      `/_layouts/15/userphoto.aspx?size=M&accountname=${currentItem.Employee.EMail}` : 
-                      'https://via.placeholder.com/70x70?text=User'
-                    } 
-                    alt={currentItem.Employee.Title}
-                    className={styles.profilePicture}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/70x70?text=User';
-                    }}
-                  />
-                  <div className={styles.employeeDetails}>
-                    <div 
-                      className={styles.employeeName}
-                      style={{
-                        fontSize: props.employeeNameFontSize || '1.25rem'
+              <div className={styles.employeeSectionContainer}>
+                <div 
+                  className={styles.cardEmployeeSection}
+                  style={{
+                    color: props.employeeTextColor || '#000000',
+                    backgroundColor: props.employeeBackgroundColor || '#f8f9fa',
+                    borderColor: props.employeeBorderColor || '#dee2e6'
+                  }}
+                >
+                  <div className={styles.employeeProfile}>
+                    <img 
+                      src={currentItem.Employee.EMail ? 
+                        `/_layouts/15/userphoto.aspx?size=M&accountname=${currentItem.Employee.EMail}` : 
+                        'https://via.placeholder.com/60x60?text=User'
+                      } 
+                      alt={currentItem.Employee.Title}
+                      className={styles.profilePicture}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/60x60?text=User';
                       }}
-                    >
-                      {currentItem.Employee.Title}
+                    />
+                    <div className={styles.employeeDetails}>
+                      <div className={styles.employeeName}>
+                        {currentItem.Employee.Title}
+                      </div>
+                      {currentItem.Employee.JobTitle && (
+                        <div className={styles.employeeJobTitle}>
+                          {currentItem.Employee.JobTitle}
+                        </div>
+                      )}
+                      {currentItem.Employee.Department && (
+                        <div className={styles.employeeDepartment}>
+                          {currentItem.Employee.Department}
+                        </div>
+                      )}
                     </div>
-                    {currentItem.Employee.JobTitle && (
-                      <div 
-                        className={styles.employeeJobTitle}
-                        style={{ 
-                          color: props.employeeTextColor || '#666666',
-                          fontSize: props.employeeJobTitleFontSize || props.employeeFontSize || '1rem'
-                        }}
-                      >
-                        {currentItem.Employee.JobTitle}
-                      </div>
-                    )}
-                    {currentItem.Employee.Department && (
-                      <div 
-                        className={styles.employeeDepartment}
-                        style={{ 
-                          color: props.employeeTextColor || '#888888',
-                          fontSize: props.employeeFontSize || '0.875rem'
-                        }}
-                      >
-                        {currentItem.Employee.Department}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -326,19 +279,15 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
           </div>
         </div>
         
-        <button 
-          className={styles.navButton} 
-          onClick={goToNext}
-          aria-label="Next item"
-          disabled={spotlightItems.length <= 1}
-          style={{
-            width: props.navButtonSize || '40px',
-            height: props.navButtonSize || '40px',
-            color: props.navButtonColor || 'inherit'
-          }}
-        >
-          <Icon iconName="ChevronRight" />
-        </button>
+        {spotlightItems.length > 1 && (
+          <button 
+            className={styles.navButton} 
+            onClick={goToNext}
+            aria-label="Next item"
+          >
+            <Icon iconName="ChevronRight" />
+          </button>
+        )}
       </div>
 
       {/* Navigation Dots */}
@@ -350,11 +299,6 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
               className={`${styles.navDot} ${index === currentItemIndex ? styles.active : ''}`}
               onClick={() => setCurrentItemIndex(index)}
               aria-label={`Go to item ${index + 1}`}
-              style={{
-                width: props.navDotSize || '10px',
-                height: props.navDotSize || '10px',
-                backgroundColor: props.navDotColor || 'rgba(0, 0, 0, 0.2)'
-              }}
             />
           ))}
         </div>
