@@ -2,22 +2,26 @@
 
 .staffSpotlight {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
+  padding: 20px 0;
   min-height: 300px;
   box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
   
   &.teams {
     font-family: $ms-font-family-fallbacks;
   }
 }
 
-// Header Section
+// Header Section - Full Width
 .headerSection {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
   text-align: center;
+  width: 100%;
+  padding: 0 20px;
 }
 
 .title {
@@ -26,14 +30,15 @@
   letter-spacing: -0.5px;
   text-transform: uppercase;
   text-align: center;
+  font-size: 2.5rem;
 }
 
 .separator {
   height: 2px;
   background-color: #e0e0e0;
-  margin: 0 auto 30px auto;
+  margin: 0 auto 40px auto;
   width: 80%;
-  max-width: 400px;
+  max-width: 600px;
 }
 
 // Loading State
@@ -109,47 +114,99 @@
   font-style: italic;
 }
 
-// Single Item View
-.singleItemContainer {
+// Full Width Container
+.fullWidthContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 40px;
+  margin-bottom: 40px;
+  position: relative;
+  width: 100%;
+  padding: 0 20px;
 }
 
-.navButton {
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+// Background Items
+.backgroundItemLeft,
+.backgroundItemRight {
+  flex: 0 0 300px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
   
   &:hover {
-    background-color: #e0e0e0;
+    opacity: 0.9 !important;
+    transform: scale(0.9) !important;
   }
+}
+
+.backgroundCard {
+  width: 100%;
+  height: 350px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  position: relative;
   
-  @media (max-width: 768px) {
-    display: none;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 1;
   }
+}
+
+.backgroundContent {
+  position: relative;
+  z-index: 2;
+  color: white;
+  width: 100%;
+}
+
+.backgroundDate {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  color: #0078d4;
+}
+
+.backgroundTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.3;
+  color: white;
+}
+
+// Center Item Container
+.centerItemContainer {
+  flex: 0 0 auto;
+  z-index: 10;
 }
 
 .spotlightCard {
-  width: 100%;
-  max-width: 600px;
-  border-radius: 8px;
+  width: 800px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
   border: 1px solid #e0e0e0;
+  position: relative;
+  z-index: 10;
 }
 
 .cardContent {
-  padding: 25px;
+  padding: 40px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -162,26 +219,27 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .cardTitle {
   font-weight: 700;
-  margin: 0 0 20px 0;
+  margin: 0 0 30px 0;
   line-height: 1.3;
-  font-size: 1.8rem;
+  font-size: 2.5rem;
 }
 
 // Description Section
 .cardDescriptionSection {
   flex: 1;
   overflow-y: auto;
-  margin-bottom: 100px; /* Space for employee section */
+  margin-bottom: 120px; /* Space for employee section */
   
   p {
     margin: 0;
-    line-height: 1.6;
-    font-size: 1.1rem;
+    line-height: 1.8;
+    font-size: 1.2rem;
+    font-weight: 300;
   }
   
   &::-webkit-scrollbar {
@@ -201,84 +259,116 @@
 // Employee Section Container - Fixed at bottom
 .employeeSectionContainer {
   position: absolute;
-  bottom: 25px;
-  left: 25px;
-  right: 25px;
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
 }
 
 .cardEmployeeSection {
   border: 1px solid;
-  border-radius: 6px;
-  padding: 15px;
+  border-radius: 8px;
+  padding: 20px;
   background-color: #f8f9fa;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
-  margin-top: 10px;
   
   /* Decorative top border */
   &::before {
     content: '';
     position: absolute;
-    top: -10px;
-    left: 20px;
-    right: 20px;
-    height: 3px;
+    top: -12px;
+    left: 30px;
+    right: 30px;
+    height: 4px;
     background: linear-gradient(90deg, #0078d4, #00bcf2);
-    border-radius: 2px;
+    border-radius: 3px;
   }
 }
 
 .employeeProfile {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .profilePicture {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .employeeDetails {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 .employeeName {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #000000;
 }
 
 .employeeJobTitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #0078d4;
   font-weight: 600;
 }
 
 .employeeDepartment {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #666666;
   font-style: italic;
+}
+
+// Navigation Buttons
+.navButtonLeft,
+.navButtonRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+  
+  &:hover {
+    background-color: #ffffff;
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+.navButtonLeft {
+  left: 40px;
+}
+
+.navButtonRight {
+  right: 40px;
 }
 
 // Navigation Dots
 .navDots {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 30px;
 }
 
 .navDot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: none;
   background-color: #e0e0e0;
@@ -292,41 +382,118 @@
   
   &.active {
     background-color: #0078d4;
+    transform: scale(1.3);
   }
 }
 
 // Responsive adjustments
+@media (max-width: 1200px) {
+  .fullWidthContainer {
+    gap: 20px;
+    padding: 0 15px;
+  }
+  
+  .spotlightCard {
+    width: 600px;
+    height: 500px !important;
+  }
+  
+  .backgroundItemLeft,
+  .backgroundItemRight {
+    flex: 0 0 250px;
+  }
+  
+  .backgroundCard {
+    height: 300px;
+  }
+  
+  .cardTitle {
+    font-size: 2rem !important;
+  }
+  
+  .cardDescriptionSection p {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .backgroundItemLeft,
+  .backgroundItemRight {
+    display: none;
+  }
+  
+  .fullWidthContainer {
+    justify-content: center;
+  }
+  
+  .spotlightCard {
+    width: 90%;
+    max-width: 600px;
+  }
+  
+  .navButtonLeft,
+  .navButtonRight {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .navButtonLeft {
+    left: 10px;
+  }
+  
+  .navButtonRight {
+    right: 10px;
+  }
+}
+
 @media (max-width: 768px) {
   .staffSpotlight {
-    padding: 15px;
+    padding: 15px 0;
+  }
+  
+  .headerSection {
+    padding: 0 15px;
+  }
+  
+  .title {
+    font-size: 1.8rem !important;
+  }
+  
+  .separator {
+    margin-bottom: 30px;
+    width: 70%;
   }
   
   .spotlightCard {
     height: 450px !important;
-    max-width: 100%;
   }
   
   .cardContent {
-    padding: 20px;
+    padding: 25px;
   }
   
   .cardTitle {
-    font-size: 1.5rem !important;
-    margin-bottom: 15px;
+    font-size: 1.6rem !important;
+    margin-bottom: 20px;
   }
   
   .cardDescriptionSection {
-    margin-bottom: 90px;
+    margin-bottom: 100px;
     
     p {
       font-size: 1rem;
+      line-height: 1.6;
     }
   }
   
   .employeeSectionContainer {
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
+    bottom: 25px;
+    left: 25px;
+    right: 25px;
+  }
+  
+  .cardEmployeeSection {
+    padding: 15px;
   }
   
   .profilePicture {
@@ -335,38 +502,48 @@
   }
   
   .employeeName {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
   
   .employeeJobTitle {
-    font-size: 0.9rem;
-  }
-  
-  .title {
-    font-size: 1.5rem !important;
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .staffSpotlight {
-    padding: 10px;
+    padding: 10px 0;
+  }
+  
+  .headerSection {
+    padding: 0 10px;
+  }
+  
+  .title {
+    font-size: 1.5rem !important;
+  }
+  
+  .separator {
+    width: 60%;
+    margin-bottom: 25px;
   }
   
   .spotlightCard {
     height: 400px !important;
+    width: 95%;
   }
   
   .cardContent {
-    padding: 15px;
+    padding: 20px;
   }
   
   .cardTitle {
-    font-size: 1.3rem !important;
-    margin-bottom: 12px;
+    font-size: 1.4rem !important;
+    margin-bottom: 15px;
   }
   
   .cardDescriptionSection {
-    margin-bottom: 80px;
+    margin-bottom: 90px;
     
     p {
       font-size: 0.95rem;
@@ -374,9 +551,9 @@
   }
   
   .employeeSectionContainer {
-    bottom: 15px;
-    left: 15px;
-    right: 15px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
   }
   
   .cardEmployeeSection {
@@ -393,34 +570,15 @@
   }
   
   .employeeName {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   
   .employeeJobTitle {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
   
-  .title {
-    font-size: 1.25rem !important;
-  }
-  
-  .navButton {
+  .navButtonLeft,
+  .navButtonRight {
     display: none;
   }
-  
-  .singleItemContainer {
-    gap: 0;
-  }
-}
-
-// Ensure the card height works properly with the fixed employee section
-.spotlightCard {
-  display: flex;
-  flex-direction: column;
-}
-
-// Make sure the card content fills the card
-.cardContent {
-  flex: 1;
-  position: relative;
 }
