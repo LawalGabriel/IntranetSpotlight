@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable no-void */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -16,7 +17,7 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
   const [spotlightItems, setSpotlightItems] = useState<ISpotLightItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [currentItemIndex, setCurrentItemIndex] = useState<number>(0);
   const spRef = useRef<any>(null);
 
   const loadSpotLightItems = useCallback(async () => {
@@ -45,15 +46,17 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
           "Employee/Id",
           "Employee/EMail",
           "Employee/JobTitle",
-          "Employee/Department"
+          "Employee/Department",
+          "AttachmentFiles/FileName",
         )
-        .expand("Employee")
+        .expand("Employee,AttachmentFiles")
         .filter("Status eq 1")
         .orderBy("Created", false)
         .top(props.defaultItemCount || 6)();
 
       setSpotlightItems(items);
       setIsLoading(false);
+      setCurrentItemIndex(0);
 
     } catch (error: any) {
       console.error('Error loading spotlight items:', error);
@@ -76,28 +79,28 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
     });
   };
 
-  const getDefaultImage = (): string => {
-    return props.defaultImage || 'https://via.placeholder.com/400x300?text=Staff+Spotlight';
+  const goToPrevious = () => {
+    setCurrentItemIndex(prevIndex => 
+      prevIndex === 0 ? spotlightItems.length - 1 : prevIndex - 1
+    );
   };
 
-  const getProfilePictureUrl = (email: string): string => {
-    if (!email) return '';
-    return `/_layouts/15/userphoto.aspx?size=M&accountname=${email}`;
+  const goToNext = () => {
+    setCurrentItemIndex(prevIndex => 
+      prevIndex === spotlightItems.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+  // Auto-rotate items every 10 seconds
+  useEffect(() => {
+    if (spotlightItems.length > 1) {
+      const interval = setInterval(() => {
+        goToNext();
+      }, 10000);
+      
+      return () => clearInterval(interval);
     }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
-    }
-  };
+  }, [spotlightItems.length]);
 
   if (isLoading) {
     return (
@@ -137,6 +140,22 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
     );
   }
 
+  if (spotlightItems.length === 0) {
+    return (
+      <div className={styles.staffSpotlight} style={{ 
+        backgroundColor: props.backgroundColor || 'transparent',
+        color: props.textColor || 'inherit'
+      }}>
+        <div className={styles.noItems}>
+          <Icon iconName="Emoji2" className={styles.noItemsIcon} />
+          <div>No spotlight items found.</div>
+        </div>
+      </div>
+    );
+  }
+
+  const currentItem = spotlightItems[currentItemIndex];
+
   return (
     <div 
       className={styles.staffSpotlight}
@@ -145,95 +164,199 @@ const StaffSpotlight: React.FC<IStaffSpotlightProps> = (props) => {
         color: props.textColor || 'inherit'
       }}
     >
-      {/* Header Section with Centered Title */}
-      <div className={styles.headerSection}>
-        <h1 className={styles.title} style={{ color: props.textColor || '#323130' }}>
-          STAFF SPOTLIGHT
+      {/* Header Section */}
+      <div 
+        className={styles.headerSection} 
+        style={{ 
+          height: props.headerHeight || 'auto',
+          minHeight: props.headerHeight || '60px'
+        }}
+      >
+        <h1 
+          className={styles.title} 
+          style={{ 
+            color: props.textColor || '#323130',
+            fontSize: props.headerFontSize || '2rem'
+          }}
+        >
+          {props.headerTitle || 'STAFF SPOTLIGHT'}
         </h1>
       </div>
 
       <div className={styles.separator} />
 
-      {/* Content Section */}
-      {spotlightItems.length === 0 ? (
-        <div className={styles.noItems}>
-          <Icon iconName="Emoji2" className={styles.noItemsIcon} />
-          <div>No spotlight items found.</div>
-        </div>
-      ) : (
-        /* Grid View with Horizontal Scroll */
-        <div className={styles.gridContainer}>
-          <button 
-            className={styles.scrollButton} 
-            onClick={scrollLeft}
-            aria-label="Scroll left"
-          >
-            <Icon iconName="ChevronLeft" />
-          </button>
-          
+      {/* Single Item Display */}
+      <div className={styles.singleItemContainer}>
+        <button 
+          className={styles.navButton} 
+          onClick={goToPrevious}
+          aria-label="Previous item"
+          disabled={spotlightItems.length <= 1}
+          style={{
+            width: props.navButtonSize || '40px',
+            height: props.navButtonSize || '40px',
+            color: props.navButtonColor || 'inherit'
+          }}
+        >
+          <Icon iconName="ChevronLeft" />
+        </button>
+        
+        <div 
+          className={styles.spotlightCard}
+          style={{
+            height: props.cardHeight || '600px',
+            width: props.cardWidth || '650px',
+            borderRadius: props.cardBorderRadius || '12px',
+            boxShadow: props.cardShadow || '0 4px 12px rgba(0, 0, 0, 0.15)'
+          }}
+        >
           <div 
-            className={styles.horizontalScrollContainer} 
-            ref={scrollContainerRef}
+            className={styles.cardContent}
+            style={{ 
+              backgroundColor: props.cardBackgroundColor || '#ffffff',
+              padding: props.cardPadding || '2.5rem'
+            }}
           >
-            {spotlightItems.map((item: ISpotLightItem) => (
+            {/* Date Section */}
+            <div 
+              className={styles.cardDate}
+              style={{ 
+                color: props.dateColor || props.accentColor || '#0078d4',
+                fontSize: props.dateFontSize || '0.875rem',
+                fontWeight: props.dateFontWeight || '600'
+              }}
+            >
+              {formatDate(currentItem.Created)}
+            </div>
+            
+            {/* Spotlight Title Section */}
+            <h3 
+              className={styles.cardTitle}
+              style={{ 
+                fontSize: props.spotlightTitleFontSize || '1.5rem',
+                color: props.spotlightTitleColor || '#323130',
+                fontWeight: props.spotlightTitleFontWeight || '600',
+                padding: props.spotlightTitlePadding || '0',
+                margin: props.spotlightTitleMargin || '0'
+              }}
+            >
+              {currentItem.Title}
+            </h3>
+            
+            {/* Description Section */}
+            {currentItem.Description && (
               <div 
-                key={item.Id} 
-                className={styles.spotlightCardWrapper}
+                className={styles.cardDescriptionSection}
+                style={{
+                  fontSize: props.descriptionFontSize || '1rem',
+                  color: props.descriptionColor || '#555555',
+                  backgroundColor: props.descriptionBackgroundColor || 'transparent',
+                  padding: props.descriptionPadding || '0',
+                  borderRadius: props.descriptionBorderRadius || '0',
+                  lineHeight: props.descriptionLineHeight || '1.5',
+                  margin: props.descriptionMargin || '0'
+                }}
               >
-                <a 
-                  href={item.Link || "#"}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={styles.spotlightCard}
-                  style={{ 
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${item.ImageURL || getDefaultImage()}')`,
-                    backgroundColor: props.cardBackgroundColor || '#ffffff'
-                  }}
-                >
-                  <div className={styles.cardContent}>
-                    <div className={styles.cardDate} style={{ color: props.accentColor || '#0078d4' }}>
-                      {formatDate(item.Created)}
+                <p>{currentItem.Description}</p>
+              </div>
+            )}
+            
+            {/* Employee Section */}
+            {currentItem.Employee && (
+              <div 
+                className={styles.cardEmployeeSection}
+                style={{
+                  color: props.employeeTextColor || 'inherit',
+                  backgroundColor: props.employeeBackgroundColor || 'rgba(248, 249, 250, 0.9)',
+                  borderColor: props.employeeBorderColor || '#dee2e6',
+                  borderWidth: props.employeeBorderWidth || '1px',
+                  borderStyle: 'solid',
+                  borderRadius: props.employeeBorderRadius || '8px',
+                  padding: props.employeePadding || '1.25rem',
+                  margin: props.employeeMargin || '0'
+                }}
+              >
+                <div className={styles.employeeProfile}>
+                  <img 
+                    src={currentItem.Employee.EMail ? 
+                      `/_layouts/15/userphoto.aspx?size=M&accountname=${currentItem.Employee.EMail}` : 
+                      'https://via.placeholder.com/70x70?text=User'
+                    } 
+                    alt={currentItem.Employee.Title}
+                    className={styles.profilePicture}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/70x70?text=User';
+                    }}
+                  />
+                  <div className={styles.employeeDetails}>
+                    <div 
+                      className={styles.employeeName}
+                      style={{
+                        fontSize: props.employeeNameFontSize || '1.25rem'
+                      }}
+                    >
+                      {currentItem.Employee.Title}
                     </div>
-                    <h3 className={styles.cardTitle}>{item.Title}</h3>
-                    <p className={styles.cardDescription} style={{ color: props.bodyTextColor || '#ffffff' }}>
-                      {item.Description}
-                    </p>
-                    
-                    {item.Employee && (
-                      <div className={styles.cardEmployeeInfo}>
-                        <div className={styles.employeeProfile}>
-                          <img 
-                            src={getProfilePictureUrl(item.Employee.EMail)} 
-                            alt={item.Employee.Title}
-                            className={styles.profilePicture}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/50x50?text=User';
-                            }}
-                          />
-                          <div className={styles.employeeDetails}>
-                            <div className={styles.employeeName}>{item.Employee.Title}</div>
-                            {item.Employee.JobTitle && (
-                              <div className={styles.employeeJobTitle} style={{ color: props.bodyTextColor || '#ffffff' }}>
-                                {item.Employee.JobTitle}
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                    {currentItem.Employee.JobTitle && (
+                      <div 
+                        className={styles.employeeJobTitle}
+                        style={{ 
+                          color: props.employeeTextColor || '#666666',
+                          fontSize: props.employeeJobTitleFontSize || props.employeeFontSize || '1rem'
+                        }}
+                      >
+                        {currentItem.Employee.JobTitle}
+                      </div>
+                    )}
+                    {currentItem.Employee.Department && (
+                      <div 
+                        className={styles.employeeDepartment}
+                        style={{ 
+                          color: props.employeeTextColor || '#888888',
+                          fontSize: props.employeeFontSize || '0.875rem'
+                        }}
+                      >
+                        {currentItem.Employee.Department}
                       </div>
                     )}
                   </div>
-                </a>
+                </div>
               </div>
-            ))}
+            )}
           </div>
-          
-          <button 
-            className={styles.scrollButton} 
-            onClick={scrollRight}
-            aria-label="Scroll right"
-          >
-            <Icon iconName="ChevronRight" />
-          </button>
+        </div>
+        
+        <button 
+          className={styles.navButton} 
+          onClick={goToNext}
+          aria-label="Next item"
+          disabled={spotlightItems.length <= 1}
+          style={{
+            width: props.navButtonSize || '40px',
+            height: props.navButtonSize || '40px',
+            color: props.navButtonColor || 'inherit'
+          }}
+        >
+          <Icon iconName="ChevronRight" />
+        </button>
+      </div>
+
+      {/* Navigation Dots */}
+      {spotlightItems.length > 1 && (
+        <div className={styles.navDots}>
+          {spotlightItems.map((_, index) => (
+            <button
+              key={index}
+              className={`${styles.navDot} ${index === currentItemIndex ? styles.active : ''}`}
+              onClick={() => setCurrentItemIndex(index)}
+              aria-label={`Go to item ${index + 1}`}
+              style={{
+                width: props.navDotSize || '10px',
+                height: props.navDotSize || '10px',
+                backgroundColor: props.navDotColor || 'rgba(0, 0, 0, 0.2)'
+              }}
+            />
+          ))}
         </div>
       )}
     </div>

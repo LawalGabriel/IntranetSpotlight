@@ -1,4 +1,5 @@
 declare interface IStaffSpotlightWebPartStrings {
+  DefaultItemCountFieldLabel: string | undefined;
   PropertyPaneDescription: string;
   BasicGroupName: string;
   DescriptionFieldLabel: string;

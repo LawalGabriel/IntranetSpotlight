@@ -15,15 +15,16 @@
   }
 }
 
-// Header Section - Centered
+// Header Section
 .headerSection {
   display: flex;
-  justify-content: center; /* Center align */
+  justify-content: center;
   align-items: center;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  text-align: center; /* Ensure text is centered */
-  width: 100%; /* Full width */
+  text-align: center;
+  width: 100%;
+  transition: height 0.3s ease;
 }
 
 .title {
@@ -32,8 +33,8 @@
   margin: 0;
   letter-spacing: -0.5px;
   text-transform: uppercase;
-  text-align: center; /* Center text */
-  width: 100%; /* Full width */
+  text-align: center;
+  width: 100%;
   
   @media (max-width: 768px) {
     font-size: 1.5rem;
@@ -44,9 +45,9 @@
   height: 2px;
   background-color: currentColor;
   opacity: 0.1;
-  margin: 0 auto 2rem auto; /* Center the separator */
-  width: 80%; /* Make separator narrower */
-  max-width: 400px; /* Max width for separator */
+  margin: 0 auto 2rem auto;
+  width: 80%;
+  max-width: 400px;
   
   @media (max-width: 768px) {
     width: 60%;
@@ -117,24 +118,80 @@
   opacity: 0.5;
 }
 
-// Grid View Styles
-.gridContainer {
+// Single Item View
+.singleItemContainer {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
+  margin-bottom: 2rem;
   position: relative;
 }
 
-.horizontalScrollContainer {
+.navButton {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 50%;
   display: flex;
-  overflow-x: auto;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.spotlightCard {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+}
+
+.cardContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  padding: 1rem 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.cardDate {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardTitle {
+  margin: 0;
+  line-height: 1.3;
+}
+
+// Description Section
+.cardDescriptionSection {
+  flex: 1;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  
+  p {
+    margin: 0;
+  }
   
   &::-webkit-scrollbar {
-    height: 6px;
+    width: 6px;
   }
   
   &::-webkit-scrollbar-track {
@@ -146,179 +203,131 @@
     border-radius: 3px;
   }
   
-  @media (max-width: 768px) {
-    gap: 1rem;
-  }
-}
-
-.scrollButton {
-  background-color: rgba(0, 0, 0, 0.1);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  color: inherit;
-  
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
-  }
-  
-  @media (max-width: 768px) {
+  &:empty {
     display: none;
   }
 }
 
-.spotlightCardWrapper {
-  flex: 0 0 auto;
-  width: 350px;
-  
-  @media (max-width: 768px) {
-    width: 300px;
-  }
-  
-  @media (max-width: 480px) {
-    width: 280px;
-  }
-}
-
-.spotlightCard {
-  display: block;
-  height: 450px;
-  border-radius: 12px;
-  text-decoration: none;
+// Employee Section
+.cardEmployeeSection {
   transition: all 0.3s ease;
-  overflow: hidden;
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  }
-}
-
-.cardContent {
-  position: relative;
-  z-index: 2;
-  padding: 2rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  color: white;
-}
-
-.cardDate {
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.cardTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 1rem 0;
-  line-height: 1.3;
-  color: white;
-}
-
-.cardDescription {
-  font-size: 1rem;
-  line-height: 1.5;
-  margin: 0 0 1.5rem 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.cardEmployeeInfo {
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-top: auto;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-style: solid;
 }
 
 .employeeProfile {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .profilePicture {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
 }
 
 .employeeDetails {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .employeeName {
-  font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: white;
 }
 
 .employeeJobTitle {
-  font-size: 0.875rem;
   opacity: 0.9;
 }
 
-// Responsive adjustments
-@media (max-width: 1024px) {
-  .spotlightCard {
-    height: 400px;
+.employeeDepartment {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+// Navigation Dots
+.navDots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.navDot {
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.2);
   }
   
-  .cardContent {
-    padding: 1.5rem;
+  &.active {
+    transform: scale(1.2);
   }
 }
 
+// Responsive adjustments
 @media (max-width: 768px) {
   .spotlightCard {
-    height: 380px;
+    width: 100% !important;
+    max-width: 550px !important;
+  }
+  
+  .cardContent {
+    padding: 2rem !important;
+    gap: 1.25rem;
   }
   
   .cardTitle {
-    font-size: 1.25rem;
+    font-size: 1.25rem !important;
   }
   
-  .cardDescription {
-    font-size: 0.9375rem;
-    -webkit-line-clamp: 3;
+  .profilePicture {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .employeeProfile {
+    gap: 1.25rem;
   }
 }
 
 @media (max-width: 480px) {
   .spotlightCard {
-    height: 350px;
+    height: 500px !important;
+    max-width: 100% !important;
   }
   
   .cardContent {
-    padding: 1.25rem;
+    padding: 1.5rem !important;
+    gap: 1rem;
   }
   
   .cardTitle {
-    font-size: 1.125rem;
+    font-size: 1.125rem !important;
+  }
+  
+  .profilePicture {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  .employeeProfile {
+    gap: 1rem;
+  }
+  
+  .navButton {
+    display: none;
+  }
+  
+  .singleItemContainer {
+    gap: 0;
   }
 }
